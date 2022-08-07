@@ -35,7 +35,7 @@ public class GetWebText : MonoBehaviour
     private string placeid = "ChIJszkk5bhhVjUR-V897bo3k0M";
     private string region = "jp";
     private string language = "ja";
-    private string key = "AIzaSyAwY1AxWB9575M4b1ojpbs1ov8jO9Tz-7w";
+    private string key = "";
     private string url = "https://maps.googleapis.com/maps/api/place/details/json?";
 
 
