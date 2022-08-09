@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
 
 [Serializable]
@@ -14,6 +15,7 @@ public class First_Result
 [Serializable]
 public class Json_File
 {
+    public string name;
     public ReviewsInfo[] reviews;
 }
 
@@ -37,6 +39,8 @@ public class GetWebText : MonoBehaviour
     private string language = "ja";
     private string key = "";
     private string url = "https://maps.googleapis.com/maps/api/place/details/json?";
+
+    public GameObject pref;
 
 
     void Start()
@@ -62,9 +66,27 @@ public class GetWebText : MonoBehaviour
             // 結果をテキストで表示
             string inputString = www.downloadHandler.text;
             Debug.Log(inputString);
+            //JsonUtiliyを使用して、Jsonデータを処理
             First_Result first_Result = JsonUtility.FromJson<First_Result>(inputString);
-            Debug.Log(first_Result.result.reviews[0].rating);
-            Debug.Log(first_Result.result.reviews[1].rating);
+
+            //reviesの数分のPrefabを生成する
+            for(int i = 0; i < first_Result.result.reviews.Length - 1 ; i++)
+
+            {
+                WWW www2 = new WWW(first_Result.result.reviews[i].profile_photo_url);
+                yield return www2;
+
+                //GameObject obj = (GameObject)Instantiate(pref);
+                GameObject prefObj = (GameObject)Instantiate(pref);
+                GameObject obj = prefObj.transform.Find("Review_Panel").gameObject;
+
+                obj.transform.Find("ReviewerPic").gameObject.GetComponent<RawImage>().texture = www2.texture;
+                obj.transform.Find("Place").gameObject.GetComponent<Text>().text = first_Result.result.name;
+                obj.transform.Find("ReviewerName").gameObject.GetComponent<Text>().text = first_Result.result.reviews[i].author_name;
+                obj.transform.Find("Time").gameObject.GetComponent<Text>().text = first_Result.result.reviews[i].relative_time_description;
+                obj.transform.Find("Review").gameObject.GetComponent<Text>().text = first_Result.result.reviews[i].text;
+            }
+
 
         }
     }
